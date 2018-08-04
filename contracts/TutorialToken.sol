@@ -1,17 +1,18 @@
 pragma solidity ^0.4.24;
 
-import "openzeppelin-solidity/contracts/token/ERC20/MintableToken.sol";
+import "openzeppelin-solidity/contracts/token/ERC20/CappedToken.sol";
 
-contract TutorialToken is MintableToken {
+
+contract TutorialToken is CappedToken {
   string public name = "TutorialToken";
   string public symbol = "TT";
   uint256 public decimals = 1;
   /* uint256 public maxSupply  = 100000000 * (10 ** decimals); */
+  constructor(uint256 _cap) public CappedToken(_cap) {
 
-  constructor(uint256 maxSupply) public {
-    totalSupply_ = maxSupply;
-    /* balances[msg.sender] = INITIAL_SUPPLY; */
-  }
+ }
+
+
 
   modifier canTransfer(address _from, uint _value) {
         require(mintingFinished);
