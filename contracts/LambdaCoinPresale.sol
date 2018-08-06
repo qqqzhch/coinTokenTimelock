@@ -1,6 +1,6 @@
 pragma solidity ^0.4.24;
 
-import "./TutorialToken.sol";
+import "./LambdaCoin.sol";
 import "openzeppelin-solidity/contracts/token/ERC20/TokenTimelock.sol";
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 import "openzeppelin-solidity/contracts/token/ERC20/SafeERC20.sol";
@@ -11,15 +11,15 @@ import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
 /* import "openzeppelin-solidity/contracts/crowdsale/Crowdsale.sol"; */
 // 这个是和销售有关的
 
-contract TokenPresale is Ownable {
+contract LambdaCoinPresale is Ownable {
   using SafeMath for uint256;
-  using SafeERC20 for TutorialToken;
+  using SafeERC20 for LambdaCoin;
 
   uint256 Capbase = 10000000 * (10 ** decimals);//1000000 * 10**uint(decimals);
 
-  TutorialToken public token;
+  LambdaCoin public token;
 
-  uint256 public decimals = 1; //默认18 精度
+  uint256 public decimals = 18; //默认18 精度
   // max tokens cap
   uint256 public tokenCap =60 * Capbase * 10 ;
   uint256 public tokenOther ;
@@ -35,12 +35,12 @@ contract TokenPresale is Ownable {
 
 
    uint256 [3] investorlimit = [54, 108, 108];
-   uint256 [3] icolimit = [21,9];//时间是不是3段？
-   uint256 [3] teamlimit = [33,33,34];//还是严格的33%？？？
+   uint256 [3] icolimit = [30];//时间是不是3段？
+   uint256 [3] teamlimit = [34,33,33];//还是严格的33%？？？
    uint256 [3] fundlimit = [180,10,10];//还是严格的33%？？？ 无穷小数会不会少钱
 
    uint64 [3] teamlimittime =[uint64(now + 5 minutes),uint64(now + 10 minutes),uint64(now + 15 minutes)];
-   uint64 [3] fundlimittime =[uint64(now + 5 minutes),uint64(now + 10 minutes),uint64(now + 15 minutes)];
+   uint64 [3] investorlimittime =[uint64(now + 5 minutes),uint64(now + 10 minutes),uint64(now + 15 minutes)];
 
 
    // team locked tokens
@@ -86,42 +86,29 @@ contract TokenPresale is Ownable {
         fundWallet = _fundWallet;
 
         // give tokens to team with lock
-       token = new TutorialToken(tokenCap);
+       token = new LambdaCoin(tokenCap);
        /* token.mint(address(this), tokenCap); */
 
 
-       investorLock[0] = new TokenTimelock(token, investorWallet, uint64(now + 5 minutes));
-       token.mint(address(investorLock[0]), investorlimit[0]*Capbase);
 
-       investorLock[1] = new TokenTimelock(token, investorWallet, uint64(now + 10 minutes));
-       token.mint(address(investorLock[1]), investorlimit[1]*Capbase);
+        uint i;
+        for(i=0;i<teamlimit.length;i++){
+          investorLock[i] = new TokenTimelock(token, investorWallet, investorlimittime[i]);
+          token.mint(address(investorLock[i]), investorlimit[i]*Capbase);
+        }
 
-       investorLock[2] = new TokenTimelock(token, investorWallet, uint64(now + 15 minutes));
-       token.mint(address(investorLock[2]), investorlimit[2]*Capbase);
-
-
-       icoLock[0] = new TokenTimelock(token, icoWallet, uint64(now + 5 minutes));
-       token.mint(address(icoLock[0]), icolimit[0]*Capbase);
-
-       icoLock[1] = new TokenTimelock(token, icoWallet, uint64(now + 10 minutes));
-       token.mint(address(icoLock[1]), icolimit[1]*Capbase);
-
-       for(uint i=0;i<teamlimit.length;i++){
+       for(i=0;i<teamlimit.length;i++){
          teamLock[i] = new TokenTimelock(token, teamWallet, teamlimittime[i]  );
          token.mint(address(teamLock[i]), teamlimit[i]*Capbase);
        }
-       // 这个没啥没有执行
-       //这个锁仓的代码必然有问题
-       /* for(uint j=0;j<fundlimit.length;j++){
-         fundLock[j] = new TokenTimelock(token, fundWallet, fundlimittime[j]  );
-         token.mint(address(fundLock[j]), fundlimit[j]*Capbase);
-       } */
+
+       token.mint(icoWallet, 30*Capbase);
        token.mint(fundWallet, 200*Capbase);
 
 
        token.finishMinting();
 
-       tokenOther=tokenCap.sub(TutorialToken(token).totalSupply());
+       tokenOther=tokenCap.sub(LambdaCoin(token).totalSupply());
 
 
 

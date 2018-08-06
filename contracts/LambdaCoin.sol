@@ -3,10 +3,10 @@ pragma solidity ^0.4.24;
 import "openzeppelin-solidity/contracts/token/ERC20/CappedToken.sol";
 
 
-contract TutorialToken is CappedToken {
-  string public name = "TutorialToken";
-  string public symbol = "TT";
-  uint256 public decimals = 1;
+contract LambdaCoin is CappedToken {
+  string public name = "LambdaCoin";
+  string public symbol = "Lambda";
+  uint256 public decimals = 18;
   /* uint256 public maxSupply  = 100000000 * (10 ** decimals); */
   constructor(uint256 _cap) public CappedToken(_cap) {
 

@@ -60,8 +60,10 @@ App = {
   bindEvents: function() {
     $(document).on('click', '#transferButton', App.handleTransfer);
     $(document).on('click', '#transferButton1', App.releasehandle);
+    $(document).on('click', '#transferButton2', App.releaseicohandle);
   },
-   releasehandle:function(event) {
+  releaseicohandle:function() {
+    event.preventDefault();
     event.preventDefault();
     web3.eth.getAccounts(function(error, accounts) {
       if (error) {
@@ -73,7 +75,7 @@ App = {
       App.contracts.TutorialToken.deployed().then(function(instance) {
         tutorialTokenInstance = instance;
 
-        tutorialTokenInstance.investorLock(1) //0 1 2
+        tutorialTokenInstance.icoLock(0) //0 1 2
         .then(function(address,data) {
           console.log(address)
           console.log(data)
@@ -112,6 +114,58 @@ App = {
         console.log(err.message);
       });
     });
+  },
+   releasehandle:function(event) {
+     event.preventDefault();
+     web3.eth.getAccounts(function(error, accounts) {
+       if (error) {
+         console.log(error);
+       }
+
+       var account = accounts[0];
+
+       App.contracts.TutorialToken.deployed().then(function(instance) {
+         tutorialTokenInstance = instance;
+
+         tutorialTokenInstance.investorLock(0) //0 1 2
+         .then(function(address,data) {
+           console.log(address)
+           console.log(data)
+           TokenTimelock=App.contracts.TokenTimelockContract.at(address);
+
+           TokenTimelock.releaseTime(function(error,body) {
+             console.log(error)
+             console.log('时间戳',body.c[0])
+
+           })
+
+           TokenTimelock.beneficiary(function(error,body) {
+             console.log(error)
+             console.log('账号地址',body)
+
+           })
+
+           TokenTimelock.release(function(error,body) {
+             console.log(error)
+             console.log(body)
+           })
+
+
+         })
+         .catch((ex)=>{
+           console.log(ex);
+         });
+
+
+       }).then(function(result) {
+
+         console.log('解锁')
+         return App.getBalances();
+
+       }).catch(function(err) {
+         console.log(err.message);
+       });
+     });
 
   },
 

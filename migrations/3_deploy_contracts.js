@@ -1,11 +1,11 @@
-var TokenPresale = artifacts.require("TokenPresale");
+var LambdaCoinPresale = artifacts.require("./LambdaCoinPresale.sol");
 
 module.exports = function(deployer) {
-  deployer.deploy(TokenPresale,
-  '0x3b9170c9fa9e12cce546d5681c0be6f1a63eefda',//_investorWallet
-  '0x774efe189ddd5cd476f7611d44a61984feaa93a8',//_icoWallet
-  '0x22c823b0aa08b901eea8ea228790ccb389b6208a',//_teamWallet
-  '0x8731c19d6041295cab8be3b9985bfd6cc9e9d2ba' //_fundWallet
+  deployer.deploy(LambdaCoinPresale,
+  '0x13f8afada9ba7d7c83447203730d0f05e9bd0da5',//_investorWallet
+  '0xe86246b754bc1b10c76307a0c2c6aeb34e79543f',//_icoWallet
+  '0x76cefedd749402591e8484eba80140be8c663383',//_teamWallet
+  '0x06e183579e29eba5fe2e4ceb5483af10d5d318cb' //_fundWallet
 
    );
 };
