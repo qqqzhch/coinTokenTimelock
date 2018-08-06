@@ -36,8 +36,14 @@ App = {
       // Get the necessary contract artifact file and instantiate it with truffle-contract.
       var TutorialTokenArtifact = data;
       var MyContract = web3.eth.contract(data.abi);
-
       App.contracts.TokenContract=MyContract;
+    })
+    $.getJSON('TokenTimelock.json', function(data) {
+      // Get the necessary contract artifact file and instantiate it with truffle-contract.
+      var TutorialTokenArtifact = data;
+      var MyContract = web3.eth.contract(data.abi);
+
+      App.contracts.TokenTimelockContract=MyContract;
 
 
       // Set the provider for our contract.
@@ -67,7 +73,36 @@ App = {
       App.contracts.TutorialToken.deployed().then(function(instance) {
         tutorialTokenInstance = instance;
 
-        return tutorialTokenInstance.releaseLockFounders1();
+        tutorialTokenInstance.investorLock(1) //0 1 2
+        .then(function(address,data) {
+          console.log(address)
+          console.log(data)
+          TokenTimelock=App.contracts.TokenTimelockContract.at(address);
+
+          TokenTimelock.releaseTime(function(error,body) {
+            console.log(error)
+            console.log('时间戳',body.c[0])
+
+          })
+
+          TokenTimelock.beneficiary(function(error,body) {
+            console.log(error)
+            console.log('账号地址',body)
+
+          })
+
+          TokenTimelock.release(function(error,body) {
+            console.log(error)
+            console.log(body)
+          })
+
+
+        })
+        .catch((ex)=>{
+          console.log(ex);
+        });
+
+
       }).then(function(result) {
 
         console.log('解锁')
@@ -121,6 +156,7 @@ App = {
       }
 
       var account = accounts[0];
+      // var account = "0xc9cd5f7a741e91ce249dae54ed9a20e2251d2db2"
       console.log(account);
 
       App.contracts.TutorialToken.deployed().then(function(instance) {
@@ -134,12 +170,19 @@ App = {
             console.log(result)
 
           })
+
+          contractInstance.totalSupply(function(err,result) {
+            console.log(result)
+
+          })
+
+
           contractInstance['symbol'](function(err,result) {
             console.log(result)
 
           })
           contractInstance.balanceOf(account,function(err,result) {
-            console.log(result);
+            console.log('余额',result);
             if(result){
               balance = result.c[0];
               $('#TTBalance').text(balance);

@@ -110,12 +110,13 @@ contract TokenPresale is Ownable {
          teamLock[i] = new TokenTimelock(token, teamWallet, teamlimittime[i]  );
          token.mint(address(teamLock[i]), teamlimit[i]*Capbase);
        }
-       //
-       for(uint j=0;i<fundlimit.length;j++){
-         fundLock[j] = new TokenTimelock(token, teamWallet, fundlimittime[j]  );
+       // 这个没啥没有执行
+       //这个锁仓的代码必然有问题
+       /* for(uint j=0;j<fundlimit.length;j++){
+         fundLock[j] = new TokenTimelock(token, fundWallet, fundlimittime[j]  );
          token.mint(address(fundLock[j]), fundlimit[j]*Capbase);
-       }
-
+       } */
+       token.mint(fundWallet, 200*Capbase);
 
 
        token.finishMinting();

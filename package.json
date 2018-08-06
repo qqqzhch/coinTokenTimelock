@@ -8,7 +8,8 @@
   },
   "scripts": {
     "dev": "lite-server",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "truffle test",
+    "test:cov": "solidity-coverage"
   },
   "author": "",
   "license": "ISC",
