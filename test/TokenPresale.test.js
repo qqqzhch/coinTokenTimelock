@@ -132,6 +132,16 @@ contract('TokenPresale',async(accounts)=>{
       num=await gettimeOf('investorLock',2)
       assert.equal(timestart+days*300,num)
 
+      num=await gettimeOf('teamLock',0)
+      assert.equal(timestart+days*365,num)
+
+
+      num=await gettimeOf('teamLock',1)
+      assert.equal(timestart+days*365*2,num)
+
+      num=await gettimeOf('teamLock',2)
+      assert.equal(timestart+days*365*3,num)
+
   })
   //
   // it("转账 小数  转账失败 ",function() {

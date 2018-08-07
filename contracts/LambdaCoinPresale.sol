@@ -59,9 +59,9 @@ contract LambdaCoinPresale is Ownable {
 
    // team locked tokens
   TokenTimelock [3] public investorLock;
-  TokenTimelock [3] public icoLock;
+  /* TokenTimelock [3] public icoLock; */
   TokenTimelock [3] public teamLock;
-  TokenTimelock [3] public fundLock;
+  /* TokenTimelock [3] public fundLock; */
 
   /* struct itemlimit {
        uint256 limit;
