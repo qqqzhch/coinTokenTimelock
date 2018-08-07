@@ -6,10 +6,13 @@ import "openzeppelin-solidity/contracts/token/ERC20/CappedToken.sol";
 contract LambdaCoin is CappedToken {
   string public name = "LambdaCoin";
   string public symbol = "Lambda";
-  uint256 public decimals = 18;
+  uint256 public decimals;
   /* uint256 public maxSupply  = 100000000 * (10 ** decimals); */
-  constructor(uint256 _cap) public CappedToken(_cap) {
 
+
+
+  constructor(uint256 _cap, uint256 _decimals) public CappedToken(_cap) {
+   decimals=_decimals;
  }
 
 

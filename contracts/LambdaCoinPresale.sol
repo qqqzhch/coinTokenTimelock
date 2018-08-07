@@ -14,14 +14,17 @@ import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
 contract LambdaCoinPresale is Ownable {
   using SafeMath for uint256;
   using SafeERC20 for LambdaCoin;
-
+  //例如精度为9的  https://etherscan.io/token/0x607F4C5BB672230e8672085532f7e901544a7375#tokenInfo
+  //https://medium.com/@jgm.orinoco/understanding-erc-20-token-contracts-a809a7310aa5
+  // 不可分割为 值为0
+  uint256 public decimals = 0; //默认18 精度  小数点后的位数 从0到18
   uint256 Capbase = 10000000 * (10 ** decimals);//1000000 * 10**uint(decimals);
-
+          //1千万的单位
   LambdaCoin public token;
 
-  uint256 public decimals = 18; //默认18 精度
+
   // max tokens cap
-  uint256 public tokenCap =60 * Capbase * 10 ;
+  uint256 public tokenCap =60  * 10 * Capbase ; //60亿
   uint256 public tokenOther ;
 
    //investor
@@ -35,12 +38,23 @@ contract LambdaCoinPresale is Ownable {
 
 
    uint256 [3] investorlimit = [54, 108, 108];
-   uint256 [3] icolimit = [30];//时间是不是3段？
+   /* uint256 [3] icolimit = [30];//时间是不是3段？ */
    uint256 [3] teamlimit = [34,33,33];//还是严格的33%？？？
-   uint256 [3] fundlimit = [180,10,10];//还是严格的33%？？？ 无穷小数会不会少钱
+   /* uint256 [3] fundlimit = [180,10,10];//还是严格的33%？？？ 无穷小数会不会少钱 */
 
-   uint64 [3] teamlimittime =[uint64(now + 5 minutes),uint64(now + 10 minutes),uint64(now + 15 minutes)];
-   uint64 [3] investorlimittime =[uint64(now + 5 minutes),uint64(now + 10 minutes),uint64(now + 15 minutes)];
+                              // 假设 上交易所的时间是9月1号
+                              //团队 1 年  2年    3年
+                              //投资 2个月  6 个月  10 个月
+   /* uint64 timestart=now; //部署时候的时间 */
+   uint64 timestart=1538323200; //9月1号的时间戳
+   uint64 [3] teamlimittime =[uint64(timestart + 365 days),uint64(timestart + 365*2 days),uint64(timestart + 365*3 days)];
+   uint64 [3] investorlimittime =[uint64(timestart + 60 days),uint64(timestart + 180 days),uint64(timestart + 300 days)];
+
+                             /* //以2018年9月1日 为起点算的绝对时间
+                             // 1天 是 86400
+   uint64 [3] teamlimittime =[1538323200+,1601481600,1633017600];
+   uint64 [3] investorlimittime =[1543593600,1554048000,1564588800]; */
+                                  //2个月      6个月        10个月
 
 
    // team locked tokens
@@ -86,10 +100,8 @@ contract LambdaCoinPresale is Ownable {
         fundWallet = _fundWallet;
 
         // give tokens to team with lock
-       token = new LambdaCoin(tokenCap);
+       token = new LambdaCoin(tokenCap,decimals);
        /* token.mint(address(this), tokenCap); */
-
-
 
         uint i;
         for(i=0;i<teamlimit.length;i++){

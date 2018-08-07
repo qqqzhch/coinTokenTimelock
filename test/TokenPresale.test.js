@@ -1,6 +1,6 @@
 // 1 假设
 
-var TokenPresale = artifacts.require("./LambdaCoinPresale.sol");
+var LambdaCoinPresale = artifacts.require("./LambdaCoinPresale.sol");
 var TutorialToken = artifacts.require("./LambdaCoin.sol");
 var TokenTimelock = artifacts.require("./TokenTimelock.sol");
 
@@ -24,7 +24,7 @@ contract('TokenPresale',async(accounts)=>{
   var teamWallet=accounts[2];
   var fundWallet=accounts[3];
   before(async () => {
-      instancePresale = await TokenPresale.new(
+      instancePresale = await LambdaCoinPresale.new(
       investorWallet,
       icoWallet,
       teamWallet,
@@ -38,11 +38,11 @@ contract('TokenPresale',async(accounts)=>{
 
   it("token的总量 60 亿个 ",async()=>{
        let  totalSupply = await tokeninstance.totalSupply.call();
-       assert.equal(6000000000,totalSupply)
+       assert.equal(6000000000,totalSupply.c[0])
   })
-  it("token的 精度是18 ",async()=> {
+  it("token的 精度是0 ",async()=> {
       let  decimals = await tokeninstance.decimals.call();
-      assert.equal(18,decimals)
+      assert.equal(0,decimals)
   })
   it("token初始化后 账号份额是校对 ",async()=> {
 
@@ -51,12 +51,12 @@ contract('TokenPresale',async(accounts)=>{
      let teambalance = await tokeninstance.balanceOf.call(teamWallet);
      let fundbalance = await tokeninstance.balanceOf.call(fundWallet);
 
-     assert.equal(0,investorbalance)
+     assert.equal(0,investorbalance.c[0])
 
-     assert.equal(0,teambalance)
+     assert.equal(0,teambalance.c[0])
 
-     assert.equal(2000000000,fundbalance)
-     assert.equal(300000000,icobalance)
+     assert.equal(2000000000,fundbalance.c[0])
+     assert.equal(300000000,icobalance.c[0])
 
 
 
@@ -65,12 +65,12 @@ contract('TokenPresale',async(accounts)=>{
   })
 
 
-  it("锁仓的份额和时间",async()=> {
+  it("锁仓的份额",async()=> {
   let getbalanceOf = async(name,index)=>{
     let investorLockAddress = await  instancePresale[name].call(index);
     let TokenTimelockinstance = await TokenTimelock.at(investorLockAddress);
     let lockbalance = await tokeninstance.balanceOf.call(TokenTimelockinstance.address);
-    return lockbalance
+    return lockbalance.c[0]
     }
     // let investorLockAddress = await  instancePresale.investorLock.call(0);
     // let TokenTimelockinstance = await TokenTimelock.at(investorLockAddress);
@@ -113,9 +113,26 @@ contract('TokenPresale',async(accounts)=>{
   })
 
 
-  // it("可以转账 整数 例如 转账100 ",function() {
-  //
-  // })
+  it("解锁时间验证 ",async()=> {
+
+    let gettimeOf = async(name,index)=>{
+      let investorLockAddress = await  instancePresale[name].call(index);
+      let TokenTimelockinstance = await TokenTimelock.at(investorLockAddress);
+      let lockTime = await  TokenTimelockinstance.releaseTime.call()
+      return lockTime.c[0]
+      }
+
+      var timestart=1538323200; //9月1号的时间戳
+      var days=86400;
+
+      var num=await gettimeOf('investorLock',0)
+      assert.equal(timestart+days*60,num)
+      num=await gettimeOf('investorLock',1)
+      assert.equal(timestart+days*180,num)
+      num=await gettimeOf('investorLock',2)
+      assert.equal(timestart+days*300,num)
+
+  })
   //
   // it("转账 小数  转账失败 ",function() {
   //
