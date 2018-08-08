@@ -23,10 +23,13 @@ App = {
   initContract: function() {
     $.getJSON('TokenPresale.json', function(data) {
       // Get the necessary contract artifact file and instantiate it with truffle-contract.
+      // var MyContract = web3.eth.contract(data.abi);
+      // App.contracts.TutorialToken=MyContract;
+
       var TutorialTokenArtifact = data;
       App.contracts.TutorialToken = TruffleContract(TutorialTokenArtifact);
-
-      // Set the provider for our contract.
+      //
+      // // Set the provider for our contract.
       App.contracts.TutorialToken.setProvider(App.web3Provider);
 
       // Use our contract to retieve and mark the adopted pets.
@@ -212,49 +215,64 @@ App = {
       var account = accounts[0];
       // var account = "0xc9cd5f7a741e91ce249dae54ed9a20e2251d2db2"
       console.log(account);
+      // try
+      // {
 
-      App.contracts.TutorialToken.deployed().then(function(instance) {
-        tutorialTokenInstance = instance;
+
+      var tutorialTokenInstance=App.contracts.TutorialToken.at('0x4f167874c8cbacdf3db8b4698241106e9f1740eb');
+      // TutorialTokenInstance.tokenCap(function(err,result) {
+      //   console.log(result)
+      //
+      // })
+
+      // App.contracts.TutorialToken.deployed().then(function(instance) {
+        // tutorialTokenInstance = instance;
         tutorialTokenInstance.tokenCap().then(function(result) {
           console.log(result)
         })
-        return  tutorialTokenInstance.token().then(function(tokenaddress) {
-          var contractInstance =App.contracts.TokenContract.at(tokenaddress);
-          contractInstance.name(function(err,result) {
-            console.log(result)
+        tutorialTokenInstance.token().then(function(tokenaddress) {
+          try{
+            var contractInstance =App.contracts.TokenContract.at(tokenaddress);
+            contractInstance.name(function(err,result) {
+              console.log(result)
 
-          })
+            })
 
-          contractInstance.totalSupply(function(err,result) {
-            console.log(result)
+            contractInstance.totalSupply(function(err,result) {
+              console.log(result)
 
-          })
-
-
-          contractInstance['symbol'](function(err,result) {
-            console.log(result)
-
-          })
-          contractInstance.balanceOf(account,function(err,result) {
-            console.log('余额',result);
-            if(result){
-              balance = result.c[0];
-              $('#TTBalance').text(balance);
-            }else{
-              console.log('没有账户')
-            }
-
-          });
+            })
 
 
+            contractInstance['symbol'](function(err,result) {
+              console.log(result)
 
+            })
+            contractInstance.balanceOf(account,function(err,result) {
+              console.log('余额',result);
+              if(result){
+                balance = result.c[0];
+                $('#TTBalance').text(balance);
+              }else{
+                console.log('没有账户')
+              }
+
+            });
+
+          }catch(ex){
+            console.log(ex);
+          }
 
 
         })
 
-      }).catch(function(err) {
-        console.log(err.message);
-      });
+      // }catch(err){
+      //   console.log(err);
+      // }
+
+      // }).catch(function(err) {
+      //   console.log(err.message);
+      // });
     });
   }
 
